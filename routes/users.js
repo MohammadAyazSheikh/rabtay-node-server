@@ -24,7 +24,7 @@ router.post('/login', (req, res, next) => {
         return res.status(401).json({ success: false, msg: "could not find user" });
       }
 
-      // Function defined at bottom of app.js
+
       const isValid = utils.validPassword(req.body.password, user.hash, user.salt);
 
       if (isValid) {
@@ -52,7 +52,11 @@ router.post('/signup', (req, res, next) => {
   const newUser = new User({
     username: req.body.username,
     hash: hash,
-    salt: salt
+    salt: salt,
+    fname: req.body.fname,
+    lname: req.body.lname,
+    dob: req.body.dob,
+    gender: req.body.gender
   });
 
   newUser.save()
