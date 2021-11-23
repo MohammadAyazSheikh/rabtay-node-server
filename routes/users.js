@@ -6,9 +6,14 @@ const utils = require('../lib/utils');
 const passport = require('passport');
 
 
+
+
+
+
 /* GET users listing. */
 router.get('/', function (req, res, next) {
   res.send('respond with a resource');
+  // db.users.findOne({"username" : {$regex : "son"}});
 });
 
 
