@@ -1,8 +1,41 @@
 var mongoose = require('mongoose');
+const { Strategy } = require('passport');
 var Schema = mongoose.Schema;
 
+const commentSchema = new Schema({
+    likes: {
+        type: Number,
+        default: 0
+    },
+    comment: {
+        type: String,
+        default: ''
+    },
+    author: {
+        type: String,
+        required: true
+    }
+}, {
+    timestamps: true
+});
 
-var User = new Schema(
+const profileImage = new Schema({
+    path: {
+        type: String,
+        default: '',
+    },
+    caption: {
+        type: String,
+        default: ''
+    },
+    // commentd: [commentSchema]
+},
+    {
+        timestamps: true
+    }
+);
+
+const User = new Schema(
     {
         username: {
             type: String,
@@ -33,7 +66,8 @@ var User = new Schema(
         gender: {
             type: Boolean,
             default: true
-        }
+        },
+        profileImage: profileImage
     }
 );
 

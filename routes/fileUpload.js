@@ -1,53 +1,12 @@
 const express = require('express');
 const multer = require('multer');
-const fs = require('fs');
 const passport = require('passport');
-
-
-const isDirectoryExist = (req, res, next) => {
-    const dirUser = `./public/users/${req.user.username}`;
-    const dirImages = `./public/users/${req.user.username}/images`;
-
-    // check if directory exists
-    if (fs.existsSync(dirImages)) {
-        next();
-    } else {
-
-        if (fs.existsSync(dirUser)) {
-
-            fs.mkdirSync(dirImages, (err) => {
-
-                if (err) {
-                    throw err;
-                }
-            });
-
-            next();
-        }
-        else {
-            fs.mkdirSync(dirUser, (err) => {
-
-                if (err) {
-                    throw err;
-                }
-            });
-
-            fs.mkdirSync(dirImages, (err) => {
-
-                if (err) {
-                    throw err;
-                }
-            })
-
-            next();
-        }
-
-    }
-}
+const User = require('../models/users');
+const isDirectoryExist = require('../config/profileImageDirConfig');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'public/images');
+        cb(null, `./public/users/${req.user.username}/images`);
     },
 
     filename: (req, file, cb) => {
@@ -68,14 +27,41 @@ const uploadRouter = express.Router();
 
 
 uploadRouter.route('/')
+
+    /*imageFile is form url/method/key name*/
+    .post(passport.authenticate('jwt', { session: false }), isDirectoryExist, upload.single('imageFile'), (req, res) => {
+        // req.file.destination
+
+
+
+        User.findByIdAndUpdate(req.user.id, {
+            $set: {
+                profileImage: { path: req.file.destination }
+            },
+        },null)
+            .then((dish) => {
+                res.statusCode = 200;
+                res.setHeader('Content-Type', 'application/json');
+                res.json(dish);
+            }, (err) => next(err))
+            .catch((err) => next(err));
+
+
+
+
+
+
+        // res.statusCode = 200;
+        // res.setHeader('Content-Type', 'application/json');
+        // res.json(req.file);
+    })
+
+
+
+
     .get(passport.authenticate('jwt', { session: false }), isDirectoryExist, (req, res, next) => {
         res.statusCode = 403;
         res.end('GET operation not supported on /imageUpload');
-    })
-    .post(upload.single('imageFile')/*imageFile is form url/method/key name*/, (req, res) => {
-        res.statusCode = 200;
-        res.setHeader('Content-Type', 'application/json');
-        res.json(req.file);
     })
     .put((req, res, next) => {
         res.statusCode = 403;
