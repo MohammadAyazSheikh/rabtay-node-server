@@ -29,32 +29,27 @@ const uploadRouter = express.Router();
 uploadRouter.route('/')
 
     /*imageFile is form url/method/key name*/
-    .post(passport.authenticate('jwt', { session: false }), isDirectoryExist, upload.single('imageFile'), (req, res) => {
-        // req.file.destination
+    .post(passport.authenticate('jwt', { session: false }),
+        isDirectoryExist, upload.single('imageFile'),
+        (req, res, next) => {
+        
+            User.findByIdAndUpdate(req.user.id, {
+                $set: {
+                    profileImage: { path: req.file.path }
+                },
+            }, null)
+                .then((user) => {
+                    User.findById(req.user.id)
+                        .then((_user) => {
+                            res.statusCode = 200;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.json(_user);
+                        })
+                        .catch(err => next(err));
 
-
-
-        User.findByIdAndUpdate(req.user.id, {
-            $set: {
-                profileImage: { path: req.file.destination }
-            },
-        },null)
-            .then((dish) => {
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'application/json');
-                res.json(dish);
-            }, (err) => next(err))
-            .catch((err) => next(err));
-
-
-
-
-
-
-        // res.statusCode = 200;
-        // res.setHeader('Content-Type', 'application/json');
-        // res.json(req.file);
-    })
+                }, (err) => next(err))
+                .catch((err) => next(err));
+        })
 
 
 
