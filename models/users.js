@@ -40,7 +40,8 @@ const User = new Schema(
         username: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
+            dropDups: true 
         },
         hash: {
             type: String,
@@ -68,6 +69,9 @@ const User = new Schema(
             default: true
         },
         profileImage: profileImage
+    },
+    {
+        timestamps: true
     }
 );
 

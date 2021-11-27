@@ -1,4 +1,3 @@
-const { json } = require('express');
 var express = require('express');
 var router = express.Router();
 const User = require('../models/users');
@@ -12,9 +11,22 @@ const passport = require('passport');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
-  res.send('respond with a resource');
-  // db.users.findOne({"username" : {$regex : "son"}});
-});
+
+  res.status(200).send('User route')
+
+})
+  .post('/', function (req, res, next) {
+    //{ "username": { $regex: req.body.username } }
+    //, { "lname": { $regex: `/${req.body.username}/i` } }
+    let txtSearch = new RegExp(`${req.body.username}i`);
+    User.find({ $or: [{ "fname": { $regex: /${req.body.username}/i } }] })
+      .then((users) => {
+        res.status(200).json({ users });
+      })
+
+  });
+
+
 
 
 router.get('/protected', passport.authenticate('jwt', { session: false }), (req, res, next) => {

@@ -32,10 +32,10 @@ uploadRouter.route('/')
     .post(passport.authenticate('jwt', { session: false }),
         isDirectoryExist, upload.single('imageFile'),
         (req, res, next) => {
-        
+
             User.findByIdAndUpdate(req.user.id, {
                 $set: {
-                    profileImage: { path: req.file.path }
+                    profileImage: { path: req.file.path.replace('public/', '') }
                 },
             }, null)
                 .then((user) => {
