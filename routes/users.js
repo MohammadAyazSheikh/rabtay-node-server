@@ -16,13 +16,30 @@ router.get('/', function (req, res, next) {
 
 })
   .post('/', function (req, res, next) {
+
     //{ "username": { $regex: req.body.username } }
-    //, { "lname": { $regex: `/${req.body.username}/i` } }
-    let txtSearch = new RegExp(`${req.body.username}i`);
-    User.find({ $or: [{ "fname": { $regex: /${req.body.username}/i } }] })
-      .then((users) => {
-        res.status(200).json({ users });
-      })
+
+    let names = req.body.username.split(' ');
+
+    if (names.length > 1) {
+
+      const fname = new RegExp(names[0], 'i');
+      const lname = new RegExp(names[1], 'i');
+
+      User.find({ $or: [{ "fname": fname }, { "lname": lname }] })
+        .then((users) => {
+          res.status(200).json({ users });
+        });
+
+    }
+    else {
+      const uname = new RegExp(req.body.username, 'i');
+
+      User.find({ $or: [{ "fname": uname }, { "lname": uname }] })
+        .then((users) => {
+          res.status(200).json({ users });
+        });
+    }
 
   });
 
