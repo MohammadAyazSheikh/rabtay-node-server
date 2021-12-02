@@ -21,6 +21,8 @@ router.get('/', function (req, res, next) {
 
     let names = req.body.username.split(' ');
 
+
+    //if user searches both fname and lname
     if (names.length > 1) {
 
       const fname = new RegExp(names[0], 'i');
@@ -83,14 +85,20 @@ router.post('/signup', (req, res, next) => {
 
   const { hash, salt } = utils.genPassword(req.body.password);
 
+  let fname = req.body.fname.slice(1);
+  let lname = req.body.lname.slice(1);
+  fname = req.body.fname.charAt(0).toUpperCase() + fname;
+  lname = req.body.lname.charAt(0).toUpperCase() + lname;
+
   const newUser = new User({
     username: req.body.username,
     hash: hash,
     salt: salt,
-    fname: req.body.fname,
-    lname: req.body.lname,
+    fname: fname,
+    lname: lname,
     dob: req.body.dob,
-    gender: req.body.gender
+    gender: req.body.gender,
+    about: req.body.about || '',
   });
 
   newUser.save()

@@ -41,7 +41,7 @@ const User = new Schema(
             type: String,
             required: true,
             unique: true,
-            dropDups: true 
+            dropDups: true
         },
         hash: {
             type: String,
@@ -67,6 +67,13 @@ const User = new Schema(
         gender: {
             type: Boolean,
             default: true
+        },
+        about: {
+            type: String,
+            default: ''
+        },
+        lastLogin: {
+            type: Date
         },
         profileImage: profileImage
     },

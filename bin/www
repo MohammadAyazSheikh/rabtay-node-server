@@ -7,6 +7,9 @@
 var app = require('../app');
 var debug = require('debug')('rabtay:server');
 var http = require('http');
+//-----Socket-------------
+const { Server } = require("socket.io");
+
 
 /**
  * Get port from environment and store in Express.
@@ -21,12 +24,28 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
+//----Socket------
+
+const io = new Server(server);
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+
+  console.log(socket.id);
+  // io.emit("chat message", 'sever send msgs');
+  // socket.on("chat message", msg => {
+  //   console.log(msg);
+  //   io.emit("chat message", 'sever send msgs');
+  // });
+});
+
+
 /**
  * Listen on provided port, on all network interfaces.
  */
 
 // server.listen(port);
-server.listen(port, '0.0.0.0', function() {
+server.listen(port, '0.0.0.0', function () {
   console.log('Listening to port:  ' + 3000);
 });
 server.on('error', onError);
