@@ -9,6 +9,7 @@ var debug = require('debug')('rabtay:server');
 var http = require('http');
 //-----Socket-------------
 const { Server } = require("socket.io");
+const socket = require('../lib/socket').socket;
 
 
 /**
@@ -24,20 +25,10 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
-//----Socket------
+//------------------------------------------Socket------------------------------------
 
-const io = new Server(server);
+socket(server);
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
-
-  console.log(socket.id);
-  // io.emit("chat message", 'sever send msgs');
-  // socket.on("chat message", msg => {
-  //   console.log(msg);
-  //   io.emit("chat message", 'sever send msgs');
-  // });
-});
 
 
 /**
@@ -110,3 +101,6 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+
+module.exports.server = server;

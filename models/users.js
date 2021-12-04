@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-const { Strategy } = require('passport');
 var Schema = mongoose.Schema;
 
 const commentSchema = new Schema({
