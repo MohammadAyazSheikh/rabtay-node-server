@@ -6,17 +6,23 @@ var Schema = mongoose.Schema;
 
 const activeUsers = new Schema(
     {
-        userID: {
+        userId: {
             type: String,
             required: true,
             unique: true,
             dropDups: true
         },
-        socketID: {
+        socketId: {
             type: String,
             required: true,
-            unique: true
+            unique: true,
+            dropDups: true
         },
+        isActive: {
+            type: Boolean,
+            required: true,
+            default: false
+        }
     },
     {
         timestamps: true
