@@ -18,6 +18,12 @@ const activeUsers = new Schema(
             unique: true,
             dropDups: true
         },
+        username: {
+            type: String,
+            required: true,
+            unique: true,
+            dropDups: true
+        },
         isActive: {
             type: Boolean,
             required: true,
@@ -29,4 +35,4 @@ const activeUsers = new Schema(
     }
 );
 
-module.exports = mongoose.model('ativeUsers', activeUsers);
+module.exports = mongoose.model('activeUsers', activeUsers);
