@@ -3,7 +3,7 @@ var router = express.Router();
 const User = require('../models/users');
 const utils = require('../lib/utils');
 const passport = require('passport');
-
+const { getNotifications } = require('./notifications');
 
 
 
@@ -11,12 +11,15 @@ const passport = require('passport');
 
 
 /* GET users listing. */
-router.get('/', function (req, res, next) {
+router.route('/')
+  .get(function (req, res, next) {
 
-  res.status(200).send('User route')
+    res.status(200).send('User route')
 
-})
-  .post('/', function (req, res, next) {
+  })
+
+  //---------Getting User-------------------------
+  .post(function (req, res, next) {
 
     //{ "username": { $regex: req.body.username } }
 
@@ -52,6 +55,7 @@ router.get('/', function (req, res, next) {
 router.get('/protected', passport.authenticate('jwt', { session: false }), (req, res, next) => {
   res.status(200).json({ success: true, msg: "You are successfully authenticated to this route!" });
 });
+
 
 router.post('/login', (req, res, next) => {
   User.findOne({ username: req.body.username })
@@ -113,5 +117,9 @@ router.post('/signup', (req, res, next) => {
       next(err);
     });
 })
+
+
+router.route('/notifications')
+  .get(passport.authenticate('jwt', { session: false }),getNotifications);
 
 module.exports = router;
