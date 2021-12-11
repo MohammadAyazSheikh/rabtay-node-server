@@ -3,7 +3,9 @@ var router = express.Router();
 const User = require('../models/users');
 const utils = require('../lib/utils');
 const passport = require('passport');
-const { getNotifications } = require('./notifications');
+const { getNotifications, getUnreadNotific } = require('./notifications');
+
+
 
 
 
@@ -120,6 +122,9 @@ router.post('/signup', (req, res, next) => {
 
 
 router.route('/notifications')
-  .get(passport.authenticate('jwt', { session: false }),getNotifications);
+  .get(passport.authenticate('jwt', { session: false }), getNotifications);
+
+router.route('/notifications/unread')
+  .get(passport.authenticate('jwt', { session: false }), getUnreadNotific);
 
 module.exports = router;
