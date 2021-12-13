@@ -3,7 +3,7 @@ var router = express.Router();
 const User = require('../models/users');
 const utils = require('../lib/utils');
 const passport = require('passport');
-const { getNotifications, getUnreadNotific } = require('./notifications');
+const { getNotifications, getUnreadNotific, markNotificRead } = require('./notifications');
 
 
 
@@ -126,5 +126,8 @@ router.route('/notifications')
 
 router.route('/notifications/unread')
   .get(passport.authenticate('jwt', { session: false }), getUnreadNotific);
+
+router.route('/notifications/read')
+  .get(passport.authenticate('jwt', { session: false }), markNotificRead);
 
 module.exports = router;

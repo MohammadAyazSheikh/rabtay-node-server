@@ -8,6 +8,7 @@ const getNotifications = (req, res, next) => {
 
     Notifications.find({ to: req.user.id })
         .populate('from')
+        .populate('to')
         .then((notific) => {
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');
@@ -31,13 +32,29 @@ const getUnreadNotific = (req, res, next) => {
             next(err)
 
         );
+}
 
-    // res.status(200).send('User route')
+const markNotificRead = (req, res, next) => {
+
+    Notifications.updateMany({ to: new ObjectId(req.user.id) }, { isRead: true }, { new: true })
+        .then((notific) => {
+            console.log(notific)
+            Notifications.count({ to: new ObjectId(req.user.id), isRead: false })
+                .then((notific) => {
+                    console.log(notific);
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.json({ unread: notific, succes: true });
+                }, (err) => next(err))
+                .catch((err) => next(err));
 
 
+        }, (err) => next(err))
+        .catch((err) => next(err));
 }
 
 module.exports = {
     getNotifications,
     getUnreadNotific,
+    markNotificRead
 };
