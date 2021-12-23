@@ -8,7 +8,6 @@ var app = require('../app');
 var debug = require('debug')('rabtay:server');
 var http = require('http');
 //-----Socket-------------
-const { Server } = require("socket.io");
 const socket = require('../lib/socket/serverConnection').socket;
 
 

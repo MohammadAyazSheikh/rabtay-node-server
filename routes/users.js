@@ -1,10 +1,11 @@
 var express = require('express');
 var router = express.Router();
 const User = require('../models/users');
+const contacts = require('../models/contactsModel');
 const utils = require('../lib/utils');
 const passport = require('passport');
 const { getNotifications, getUnreadNotific, markNotificRead } = require('./notifications');
-
+const { addContact, addFriendContact } = require('./contactRouteMiddleware/addContact');
 
 
 
@@ -23,7 +24,7 @@ router.route('/')
   //---------Getting User-------------------------
   .post(function (req, res, next) {
 
-    //{ "username": { $regex: req.body.username } }
+
 
     let names = req.body.username.split(' ');
 
@@ -129,5 +130,20 @@ router.route('/notifications/unread')
 
 router.route('/notifications/read')
   .get(passport.authenticate('jwt', { session: false }), markNotificRead);
+
+
+
+router.post('/addcontact', passport.authenticate('jwt', { session: false }), addContact);
+router.get('/getcontact', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+  contacts.find({})
+  .populate('contacts.contactId')
+  .populate('userId')
+    .then(cont => {
+      res
+        .status(200)
+        .setHeader('Content-Type', 'application/json')
+        .json(cont)
+    }, err => next(err))
+});
 
 module.exports = router;
