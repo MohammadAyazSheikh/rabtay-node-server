@@ -17,7 +17,8 @@ const { addContact, addFriendContact } = require('./contactRouteMiddleware/addCo
 router.route('/')
   .get(function (req, res, next) {
 
-    res.status(200).send('User route')
+    // res.status(200).send('User route')
+    res.status(200).json({succes:true})
 
   })
 

@@ -1,12 +1,14 @@
 const contacts = require('../../models/contactsModel');
+const notification = require('../../models/notificationModel');
 
 const addContact = (req, res, next) => {
 
-
-    addFriendContact(req, res, next);
+    dltNotific(req, req.body.contactId);
 
     contacts.findOne({ userId: req.user.id })
         .then(user => {
+
+            addFriendContact(req, res, next);
 
             if (!user) {
                 const newContact = new contacts({
@@ -19,6 +21,7 @@ const addContact = (req, res, next) => {
                         user.contacts.push({ contactId: req.body.contactId });
                         user.save()
                             .then(contact => {
+
                                 contacts.findOne({ userId: req.user.id })
                                     .populate('contacts.contactId')
                                     .populate('userId')
@@ -110,7 +113,13 @@ const addFriendContact = (req, res, next) => {
 
 }
 
+
+const dltNotific = (req, senderId) => {
+    notification.deleteOne({ to: req.user.id, from: senderId, type: 'follow' })
+        .then(data => {
+            console.log('deleted');
+        })
+}
 module.exports = {
-    addContact,
-    addFriendContact
+    addContact
 }
