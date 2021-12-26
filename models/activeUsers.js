@@ -6,9 +6,16 @@ var Schema = mongoose.Schema;
 
 const activeUsers = new Schema(
     {
+        // userId: {
+        //     type: String,
+        //     required: true,
+        //     unique: true,
+        //     dropDups: true
+        // },
         userId: {
-            type: String,
+            type: mongoose.Schema.Types.ObjectId,
             required: true,
+            ref: 'User',
             unique: true,
             dropDups: true
         },

@@ -5,7 +5,8 @@ const contacts = require('../models/contactsModel');
 const utils = require('../lib/utils');
 const passport = require('passport');
 const { getNotifications, getUnreadNotific, markNotificRead } = require('./notifications');
-const { addContact, addFriendContact } = require('./contactRouteMiddleware/addContact');
+const { addContact } = require('./contactRouteMiddleware/addContact');
+const { getContacts } = require('./contactRouteMiddleware/getContacts');
 
 
 
@@ -18,7 +19,7 @@ router.route('/')
   .get(function (req, res, next) {
 
     // res.status(200).send('User route')
-    res.status(200).json({succes:true})
+    res.status(200).json({ succes: true })
 
   })
 
@@ -122,6 +123,7 @@ router.post('/signup', (req, res, next) => {
     });
 })
 
+//=========================================== Notifications ==================================
 
 router.route('/notifications')
   .get(passport.authenticate('jwt', { session: false }), getNotifications);
@@ -133,18 +135,8 @@ router.route('/notifications/read')
   .get(passport.authenticate('jwt', { session: false }), markNotificRead);
 
 
-
+//=========================================== Contacts Routes ==================================
 router.post('/addcontact', passport.authenticate('jwt', { session: false }), addContact);
-router.get('/getcontact', passport.authenticate('jwt', { session: false }), (req, res, next) => {
-  contacts.find({})
-  .populate('contacts.contactId')
-  .populate('userId')
-    .then(cont => {
-      res
-        .status(200)
-        .setHeader('Content-Type', 'application/json')
-        .json(cont)
-    }, err => next(err))
-});
+router.get('/getcontact', passport.authenticate('jwt', { session: false }), getContacts);
 
 module.exports = router;
