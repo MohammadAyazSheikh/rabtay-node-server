@@ -28,11 +28,18 @@ const getContacts = (req, res, next) => {
             }
         }
     ])
-        .then(cont => {
-            res
-                .status(200)
-                .setHeader('Content-Type', 'application/json')
-                .json(cont)
+        .then(contacts_ => {
+
+            contacts.populate(contacts_, { path: "contacts.contactId" })
+                .then(_contacts => {
+
+                    res
+                        .status(200)
+                        .setHeader('Content-Type', 'application/json')
+                        .json(_contacts)
+
+                }, err => next(err));
+
         }, err => next(err));
 
 }
