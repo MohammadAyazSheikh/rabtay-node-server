@@ -1,7 +1,6 @@
 const contacts = require('../../models/contactsModel');
-const notification = require('../../models/notificationModel');
-const activeUsers = require('../../models/activeUsers');
 const ObjectId = require('mongoose').Types.ObjectId;
+
 
 
 const getContacts = (req, res, next) => {
@@ -19,17 +18,20 @@ const getContacts = (req, res, next) => {
                 as: "ActiveContacts"
             }
         },
+        { $unwind: "$ActiveContacts" },
         {
             $project: {
 
                 // contact: "$contacts.contactId",
-                // userId: 1
+                // userId: 1,
+                // ActiveContacts:1,
                 contacts: 1,
                 isActive: "$ActiveContacts.isActive",
                 lastSeen: "$ActiveContacts.updatedAt",
                 socketId: "$ActiveContacts.socketId"
             }
-        }
+        },
+        { $sort: { isActive: -1 } },
     ])
         .then(contacts_ => {
 
