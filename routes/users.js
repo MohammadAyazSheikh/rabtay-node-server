@@ -4,7 +4,7 @@ const User = require('../models/users');
 const contacts = require('../models/contactsModel');
 const utils = require('../lib/utils');
 const passport = require('passport');
-const { getNotifications, getUnreadNotific, markNotificRead } = require('./notifications');
+const { getNotifications, getUnreadNotific, markNotificRead, dltNotific } = require('./notifications');
 const { addContact } = require('./contactRouteMiddleware/addContact');
 const { getContacts } = require('./contactRouteMiddleware/getContacts');
 
@@ -126,7 +126,8 @@ router.post('/signup', (req, res, next) => {
 //=========================================== Notifications ==================================
 
 router.route('/notifications')
-  .get(passport.authenticate('jwt', { session: false }), getNotifications);
+  .get(passport.authenticate('jwt', { session: false }), getNotifications)
+  .delete(passport.authenticate('jwt', { session: false }), dltNotific);
 
 router.route('/notifications/unread')
   .get(passport.authenticate('jwt', { session: false }), getUnreadNotific);
@@ -135,8 +136,10 @@ router.route('/notifications/read')
   .get(passport.authenticate('jwt', { session: false }), markNotificRead);
 
 
+
 //=========================================== Contacts Routes ==================================
 router.post('/addcontact', passport.authenticate('jwt', { session: false }), addContact);
 router.get('/getcontact', passport.authenticate('jwt', { session: false }), getContacts);
+
 
 module.exports = router;

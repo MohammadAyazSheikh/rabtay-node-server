@@ -1,6 +1,7 @@
 const contacts = require('../../models/contactsModel');
 const notification = require('../../models/notificationModel');
 
+
 const addContact = (req, res, next) => {
 
     dltNotific(req, req.body.contactId);
@@ -113,13 +114,13 @@ const addFriendContact = (req, res, next) => {
 
 }
 
-
 const dltNotific = (req, senderId) => {
-    notification.deleteOne({ to: req.user.id, from: senderId, type: 'follow' })
+    notification.deleteOne({ to: req.user.id, from: senderId })
         .then(data => {
             console.log('deleted');
         })
 }
+
 module.exports = {
     addContact
 }
