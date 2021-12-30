@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const User = require('../models/users');
-const contacts = require('../models/contactsModel');
+const Contacts = require('../models/contactsModel');
+const ObjectId = require('mongoose').Types.ObjectId;
 const utils = require('../lib/utils');
 const passport = require('passport');
 const { getNotifications, getUnreadNotific, markNotificRead, dltNotific } = require('./notifications');
@@ -24,33 +25,85 @@ router.route('/')
   })
 
   //---------Getting User-------------------------
-  .post(function (req, res, next) {
-
-
+  .post(passport.authenticate('jwt', { session: false }), function (req, res, next) {
 
     let names = req.body.username.split(' ');
 
+    Contacts.aggregate([
+      { $match: { userId: new ObjectId(req.user.id) } },
+      { $unwind: "$contacts" },
+      {
+        $project: {
+          contactId: "$contacts.contactId",
+          _id: 0
+        }
+      },
+    ])
+      .then(contacts_ => {
 
-    //if user searches both fname and lname
-    if (names.length > 1) {
 
-      const fname = new RegExp(names[0], 'i');
-      const lname = new RegExp(names[1], 'i');
+        if (names.length > 1) {
 
-      User.find({ $or: [{ "fname": fname }, { "lname": lname }] })
-        .then((users) => {
-          res.status(200).json({ users });
-        });
+          const fname = new RegExp(names[0], 'i');
+          const lname = new RegExp(names[1], 'i');
 
-    }
-    else {
-      const uname = new RegExp(req.body.username, 'i');
+          User.find({ $or: [{ "fname": fname }, { "lname": lname }] })
+            .then((users) => {
 
-      User.find({ $or: [{ "fname": uname }, { "lname": uname }] })
-        .then((users) => {
-          res.status(200).json({ users });
-        });
-    }
+              let users_ = users.map(user => {
+                let _user = { ...user._doc };
+
+                for (let i = 0; i < contacts_.length; i++) {
+
+                  if (contacts_[i].contactId.toString() === user._id.toString()) {
+
+                    _user.isFriend = true;
+                  }
+                  else {
+                    _user.isFriend = false;
+                  }
+                }
+                return _user;
+              });
+
+              res
+                .status(200)
+                .setHeader('Content-Type', 'application/json')
+                .json(users_)
+
+            });
+
+        }
+        else {
+          const uname = new RegExp(req.body.username, 'i');
+          User.find({ $or: [{ "fname": uname }, { "lname": uname }] })
+            .then((users) => {
+
+              let users_ = users.map(user => {
+                let _user = { ...user._doc };
+
+                for (let i = 0; i < contacts_.length; i++) {
+
+                  if (contacts_[i].contactId.toString() === user._id.toString()) {
+
+                    _user.isFriend = true;
+                  }
+                  else {
+                    _user.isFriend = false;
+                  }
+                }
+                return _user;
+              });
+
+              res
+                .status(200)
+                .setHeader('Content-Type', 'application/json')
+                .json(users_)
+
+            });
+
+        }
+      }, err => next(err));
 
   });
 
@@ -143,3 +196,32 @@ router.get('/getcontact', passport.authenticate('jwt', { session: false }), getC
 
 
 module.exports = router;
+
+
+
+/*
+
+    let names = req.body.username.split(' ');
+
+
+    //if user searches both fname and lname
+    if (names.length > 1) {
+
+      const fname = new RegExp(names[0], 'i');
+      const lname = new RegExp(names[1], 'i');
+
+      User.find({ $or: [{ "fname": fname }, { "lname": lname }] })
+        .then((users) => {
+          res.status(200).json({ users });
+        });
+
+    }
+    else {
+      const uname = new RegExp(req.body.username, 'i');
+
+      User.find({ $or: [{ "fname": uname }, { "lname": uname }] })
+        .then((users) => {
+          res.status(200).json({ users });
+        });
+    }
+*/
