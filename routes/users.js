@@ -47,7 +47,14 @@ router.route('/')
           const fname = new RegExp(names[0], 'i');
           const lname = new RegExp(names[1], 'i');
 
-          User.find({ $or: [{ "fname": fname }, { "lname": lname }] })
+          User.find(
+            {
+              $and: [
+                { $or: [{ "fname": fname }, { "lname": lname }] },
+                { _id: { $ne: req.user._id } }
+              ],
+            }
+          )
             .then((users) => {
 
               let users_ = users.map(user => {
@@ -76,7 +83,14 @@ router.route('/')
         }
         else {
           const uname = new RegExp(req.body.username, 'i');
-          User.find({ $or: [{ "fname": uname }, { "lname": uname }] })
+          User.find(
+            {
+              $and: [
+                { $or: [{ "fname": uname }, { "lname": uname }] },
+                { _id: { $ne: req.user._id } }
+              ],
+            }
+          )
             .then((users) => {
 
               let users_ = users.map(user => {
