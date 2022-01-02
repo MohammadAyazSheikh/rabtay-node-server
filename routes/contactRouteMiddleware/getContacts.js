@@ -4,7 +4,7 @@ const ObjectId = require('mongoose').Types.ObjectId;
 
 
 const getContacts = (req, res, next) => {
-
+    console.log(req.params.userId);
 
     contacts.aggregate([
         { $match: { userId: new ObjectId(req.user.id) } },
