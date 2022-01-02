@@ -55,10 +55,14 @@ const markNotificRead = (req, res, next) => {
 
 
 const dltNotific = (req, res, next) => {
-    console.log(`snder id = ${req.body.senderId}`)
-    Notifications.deleteOne({ to: req.user.id, from: req.body.senderId })
+    console.log(`snder id = ${req.body.userId}`);
+
+    const fromId = req.body.isCreator ? req.user.id : req.body.userId;
+    const toId = req.body.isCreator ? req.body.userId : req.user.id;
+
+    Notifications.deleteOne({ to: toId, from: fromId, type: req.body.type })
         .then(data => {
-            console.log(`\n\ndleted data = ${req.body.senderId}\n\n`)
+            console.log(`\n\ndleted data = ${req.body.userId}\n\n`)
             Notifications.find({ to: req.user.id })
                 .populate('from')
                 .populate('to')
