@@ -102,11 +102,9 @@ const addFriendContact = (req, res, next) => {
                         contacts.findOne({ userId: req.body.contactId })
                             .populate('contacts.contactId')
                             .then(contacts => {
-                                // res
-                                //     .status(200)
-                                //     .setHeader('Content-Type', 'application/json')
-                                //     .json(contacts)
+        
                                 console.log(JSON.stringify(contacts));
+                                
                             }, err => next(err))
                     });
             }

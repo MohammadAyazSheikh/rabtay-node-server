@@ -1,14 +1,12 @@
 var express = require('express');
 var router = express.Router();
 const User = require('../models/users');
-const Notifications = require('../models/notificationModel');
-const Contacts = require('../models/contactsModel');
-const ObjectId = require('mongoose').Types.ObjectId;
 const utils = require('../lib/utils');
 const passport = require('passport');
 const { getNotifications, getUnreadNotific, markNotificRead, dltNotific } = require('./notificationsMiddleware');
 const { addContact } = require('./contactRouteMiddleware/addContact');
 const { getContacts } = require('./contactRouteMiddleware/getContacts');
+const { dltContact } = require('./contactRouteMiddleware/dltContact');
 const { GetUsers } = require('./userRouteMiddleware/getUsers');
 const { GetSingleUsers } = require('./userRouteMiddleware/getSingleUser');
 
@@ -116,6 +114,7 @@ router.route('/notifications/read')
 //=========================================== Contacts Routes ==================================
 router.post('/addcontact', passport.authenticate('jwt', { session: false }), addContact);
 router.get('/getcontact', passport.authenticate('jwt', { session: false }), getContacts);
+router.post('/dltcontact', passport.authenticate('jwt', { session: false }), dltContact);
 
 
 module.exports = router;
