@@ -10,6 +10,11 @@ const MessagesSchema = new Schema({
         type: String,
         default: null
     },
+    from: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
+    },
     isSent: {
         type: Boolean,
         default: false
@@ -30,11 +35,11 @@ const MessagesSchema = new Schema({
 
 const Chat = new Schema(
     {
-        message: [MessagesSchema]
+        messages: [MessagesSchema]
     },
     {
         timestamps: true
     }
 );
 
-module.exports = mongoose.model('User', User);
+module.exports = mongoose.model('Chat', Chat);
