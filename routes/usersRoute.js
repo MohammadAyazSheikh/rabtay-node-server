@@ -9,6 +9,7 @@ const { getContacts } = require('./contactRouteMiddleware/getContacts');
 const { dltContact } = require('./contactRouteMiddleware/dltContact');
 const { GetUsers } = require('./userRouteMiddleware/getUsers');
 const { GetSingleUsers } = require('./userRouteMiddleware/getSingleUser');
+const { addMessage } = require('./chatRouteMiddleware/addMessage');
 
 
 
@@ -115,6 +116,11 @@ router.route('/notifications/read')
 router.post('/addcontact', passport.authenticate('jwt', { session: false }), addContact);
 router.get('/getcontact', passport.authenticate('jwt', { session: false }), getContacts);
 router.post('/dltcontact', passport.authenticate('jwt', { session: false }), dltContact);
+
+
+//=========================================== Chats Routes ==================================
+router.post('/addMessage', passport.authenticate('jwt', { session: false }), addMessage);
+
 
 
 module.exports = router;

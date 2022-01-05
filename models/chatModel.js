@@ -15,6 +15,15 @@ const MessagesSchema = new Schema({
         required: true,
         ref: 'User'
     },
+    to: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
+    },
+    type: {
+        type: String,
+        default: 'text',
+    },
     isSent: {
         type: Boolean,
         default: false

@@ -4,9 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-// const notificRouter = require('./routes/notifications');
-const uploadRouter = require('./routes/fileUpload');
+const usersRouter = require('./routes/usersRoute');
+const uploadRouter = require('./routes/fileUploadRoute');
 
 
 const passport = require('passport');
