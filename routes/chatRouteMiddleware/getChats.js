@@ -9,7 +9,7 @@ const getChats = (req, res, next) => {
     userChat.aggregate([
         { $match: { userId: req.user._id } },
         // { $unwind: "$chats" },
-        { $project: { chatsId: "$chats.chatId", userId: 1 } },
+        // { $project: { chatsId: "$chats.chatId", userId: 1 } },
         //   { $unwind: "$chatsId" },
     ])
         .then(chats => {

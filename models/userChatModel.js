@@ -6,7 +6,7 @@ const _chats = new Schema(
         chatId: {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
-            ref: 'Chat'
+            ref: 'Chats'
         }
     },
     {

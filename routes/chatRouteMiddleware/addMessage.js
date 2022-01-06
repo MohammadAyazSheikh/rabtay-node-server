@@ -2,7 +2,97 @@ const Chat = require('../../models/chatModel');
 const userChat = require('../../models/userChatModel');
 const ObjectId = require('mongoose').Types.ObjectId;
 
+
+const pushSecondUser = (req, res, next, chat) => {
+
+    console.log(`in 2nd ${req.user.id} ${req.body.to} `)
+    userChat.findOne({ userId: req.body.to })
+        .then(uChat => {
+
+            if (uChat) {
+                uChat.chats.push({ chatId: chat._id });
+                uChat.save()
+                    .then(uChat => {
+
+                        res.status(200)
+                            .setHeader('Content-Type', 'application/json')
+                            .json(chat);
+
+
+                    }, err => next(err))
+                    .catch(err => err)
+
+            }
+            else {
+
+                let NewUserChat = new userChat({ userId: req.body.to });
+
+                NewUserChat.save()
+                    .then(newUserChat => {
+
+                        newUserChat.chats.push({ chatId: chat._id });
+                        newUserChat.save()
+                            .then(uChat => {
+
+                                res.status(200)
+                                    .setHeader('Content-Type', 'application/json')
+                                    .json(chat);
+
+                            }, err => next(err))
+                            .catch(err => err);
+
+                    }, err => next(err))
+                    .catch(err => err);
+            }
+        }, err => next(err))
+        .catch(err => err);
+}
+
+const pushUserChat = (req, res, next, chat) => {
+
+    userChat.findOne({ userId: req.user.id })
+        .then(uChat => {
+
+            if (uChat) {
+              
+                uChat.chats.push({ chatId: chat._id });
+                uChat.save()
+                    .then(uChat => {
+
+                        //Pushing 2nd User Data 
+                        pushSecondUser(req, res, next, chat);
+
+                    }, err => next(err))
+                    .catch(err => err)
+
+            }
+            else {
+
+                let NewUserChat = new userChat({ userId: req.user.id });
+
+                NewUserChat.save()
+                    .then(newUserChat => {
+
+                        newUserChat.chats.push({ chatId: chat._id });
+                        newUserChat.save()
+                            .then(uChat => {
+
+                                pushSecondUser(req, res, next, chat);
+
+                            }, err => next(err))
+                            .catch(err => err);
+
+                    }, err => next(err))
+                    .catch(err => err);
+            }
+        }, err => next(err))
+        .catch(err => err);
+}
+
+
+
 const addMessage = (req, res, next) => {
+
 
     //if chat doesnt chat exist
     if (req.body.initializeChat) {
@@ -31,38 +121,10 @@ const addMessage = (req, res, next) => {
                     .save()
                     .then(chat => {
 
-                        //--------------Adding New Chat to  User 1 Chat---------------- 
-                        let NewUserChat = new userChat({ userId: req.user.id });
-                        NewUserChat.save()
-                            .then(newUserChat => {
-                                newUserChat.chats.push({ chatId: chat._id });
-                                newUserChat.save()
-                                    .then(uChat => {
-
-                                        //  //--------------Adding New Chat to  User 2 Chat---------------- 
-
-                                        let _NewUserChat = new userChat({ userId: req.body.to });
-                                        _NewUserChat.save()
-                                            .then(_newUserChat => {
-                                                _newUserChat.chats.push({ chatId: chat._id });
-                                                _newUserChat.save()
-                                                    .then(_uChat => {
-
-                                                        res
-                                                            .status(200)
-                                                            .setHeader('Content-Type', 'application/json')
-                                                            .json(chat);
-
-                                                    }, err => next(err))
-                                                    .catch(err => next(err));
-                                            }, err => next(err))
-                                            .catch(err => next(err));
+                        //----Adding New Chat to  User  Chat------
+                        pushUserChat(req, res, next, chat);
 
 
-                                    }, err => next(err))
-                                    .catch(err => next(err));
-                            }, err => next(err))
-                            .catch(err => next(err));
                     })
             }, err => next(err))
             .catch((err) => {
@@ -74,7 +136,6 @@ const addMessage = (req, res, next) => {
 
         Chat.findOne({ _id: new ObjectId(req.body.chatId) })
             .then(chat => {
-
 
                 chat.messages.push(
                     {
@@ -108,3 +169,42 @@ const addMessage = (req, res, next) => {
 module.exports = {
     addMessage
 }
+
+
+/*
+
+ const  pushUserChat = (userId, chatId) => {
+    console.log(`push chat method =  ${userId} ${chatId}`)
+    userChat.find({ userId: userId })
+        .then(uChat => {
+            if (uChat) {
+                uChats.push({ chatId: chatId });
+                newUserChat.save()
+                    .then(uChat => {
+                        console.log(uChat);
+                    }, err => next(err))
+                    .catch(err => err)
+
+            }
+            else {
+
+                let NewUserChat = new userChat({ userId: userId });
+
+                NewUserChat.save()
+                    .then(newUserChat => {
+
+                        newUserChat.chats.push({ chatId: chatId });
+                        newUserChat.save()
+                            .then(uChat => {
+                                console.log(uChat);
+                            }, err => next(err))
+                            .catch(err => err);
+
+                    }, err => next(err))
+                    .catch(err => err);
+            }
+        }, err => next(err))
+        .catch(err => err);
+}
+
+*/
