@@ -30,4 +30,4 @@ const userChat = new Schema(
     }
 );
 
-module.exports = mongoose.model('userChat', userChat);
+module.exports = mongoose.model('userChats', userChat);

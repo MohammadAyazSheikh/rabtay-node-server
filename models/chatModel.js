@@ -41,9 +41,17 @@ const MessagesSchema = new Schema({
 });
 
 
+const users = new Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
+    }
+});
 
 const Chat = new Schema(
     {
+        users: [users],
         messages: [MessagesSchema]
     },
     {
@@ -51,4 +59,4 @@ const Chat = new Schema(
     }
 );
 
-module.exports = mongoose.model('Chat', Chat);
+module.exports = mongoose.model('Chats', Chat);
