@@ -10,6 +10,7 @@ const { dltContact } = require('./contactRouteMiddleware/dltContact');
 const { GetUsers } = require('./userRouteMiddleware/getUsers');
 const { GetSingleUsers } = require('./userRouteMiddleware/getSingleUser');
 const { addMessage } = require('./chatRouteMiddleware/addMessage');
+const { getChats } = require('./chatRouteMiddleware/getChats');
 
 
 
@@ -120,6 +121,17 @@ router.post('/dltcontact', passport.authenticate('jwt', { session: false }), dlt
 
 //=========================================== Chats Routes ==================================
 router.post('/addMessage', passport.authenticate('jwt', { session: false }), addMessage);
+router.get('/getMessage', passport.authenticate('jwt', { session: false }), getChats);
+
+// router.route('/test')
+//   .get((req, res, next) => {
+//     res.status(200).send("test");
+//   });
+
+// router.route('/test/:id')
+//   .get((req, res, next) => {
+//     res.status(200).send(`${req.params.id}`);
+//   });
 
 
 
