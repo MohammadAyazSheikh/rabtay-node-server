@@ -7,27 +7,43 @@ const getChats = (req, res, next) => {
 
 
     userChat.aggregate([
+        //getting  chats ids from userChat collection
         { $match: { userId: req.user._id } },
-        // { $unwind: "$chats" },
-        // { $project: { chatsId: "$chats.chatId", userId: 1 } },
-        //   { $unwind: "$chatsId" },
+        //unwind chats array
+        { $unwind: "$chats" },
+        //projecting only chats id
+        { $project: { chatsId: "$chats.chatId", _id: 0 } },
+        //joining chats collection (getting all chats )
+        {
+            $lookup:
+            {
+                from: "chats",
+                localField: "chatsId",
+                foreignField: "_id",
+                as: "chats"
+            }
+        },
+        // removing users and messges from chats array result of lookup
+        {
+            $project: {
+                users: "$chats.users",
+                messages: "$chats.messages"
+            }
+        },
+        //removing unnecessary  arrays brackets
+        { $unwind: "$users" },
+        { $unwind: "$messages" },
+        //project only users & only 1st message of each chat
+        {
+            $project: {
+                users: "$users.userId",
+                messages: { $first: "$messages" },
+            }
+        },
     ])
         .then(chats => {
 
-            // const chatsIdArray = chats[0].chatsId;
-            // console.log(chatsIdArray);
-            // Chat.find({ _id: { $in: chats[0].chatsId } })
-            //     .then(chats => {
-            //         console.log(chats);
-            //         res.status(200)
-            //             .setHeader('Content-Type', 'application/json')
-            //             .json(chats);
-            //     }, err => next(err))
-            //     .then(err => next(err));
-
-
-
-                res.status(200)
+            res.status(200)
                 .setHeader('Content-Type', 'application/json')
                 .json(chats);
 
