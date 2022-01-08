@@ -4,8 +4,6 @@ const ObjectId = require('mongoose').Types.ObjectId;
 
 const getChats = (req, res, next) => {
 
-
-
     userChat.aggregate([
         //getting  chats ids from userChat collection
         { $match: { userId: req.user._id } },
@@ -26,18 +24,21 @@ const getChats = (req, res, next) => {
         // removing users and messges from chats array result of lookup
         {
             $project: {
+                chatId: "$chatsId",
                 users: "$chats.users",
-                messages: "$chats.messages"
+                messages: "$chats.messages",
+
             }
         },
-        //removing unnecessary  arrays brackets
+        // //removing unnecessary  arrays brackets
         { $unwind: "$users" },
         { $unwind: "$messages" },
-        //project only users & only 1st message of each chat
+        // project only users & only 1st message of each chat
         {
             $project: {
+                chatId: 1,
                 users: "$users.userId",
-                messages: { $first: "$messages" },
+                message: { $first: "$messages" }, //getting 1st element of array
             }
         },
     ])
@@ -54,6 +55,22 @@ const getChats = (req, res, next) => {
 
 }
 
+const getSingleChat = (req, res, next) => {
+
+
+    // res.status(200).send(req.params.chatId);
+    Chat.findById(req.params.chatId)
+        .then(chat => {
+            res.status(200)
+                .setHeader('Content-Type', 'application/json')
+                .json(chat);
+        },
+            err => next(err))
+        .catch(err => next(err));
+
+}
+
 module.exports = {
-    getChats
+    getChats,
+    getSingleChat
 }
