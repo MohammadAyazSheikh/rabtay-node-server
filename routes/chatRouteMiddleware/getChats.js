@@ -77,28 +77,16 @@ const getSingleChat = (req, res, next) => {
                 isTyping: "$users.isTyping",
                 messages: 1,
             }
-        }
+        },
+      
     ])
         .then(chat => {
             res.status(200)
                 .setHeader('Content-Type', 'application/json')
-                .json(chat);
+                .json(chat[0]);
         },
             err => next(err))
         .catch(err => next(err));
-
-
-
-
-
-    // Chat.findById(req.params.chatId)
-    //     .then(chat => {
-    //         res.status(200)
-    //             .setHeader('Content-Type', 'application/json')
-    //             .json(chat);
-    //     },
-    //         err => next(err))
-    //     .catch(err => next(err));
 
 }
 
