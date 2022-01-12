@@ -4,6 +4,8 @@ const ObjectId = require('mongoose').Types.ObjectId;
 
 const getChats = (req, res, next) => {
 
+
+
     userChat.aggregate([
         //getting  chats ids from userChat collection
         { $match: { userId: req.user._id } },
@@ -33,12 +35,16 @@ const getChats = (req, res, next) => {
         // //removing unnecessary  arrays brackets
         { $unwind: "$users" },
         { $unwind: "$messages" },
+        { $unwind: "$users" },
+        //removing own uId we need only friend id
+        { $match: { "users.userId": { $ne: new ObjectId(req.user.id) } } },
         // project only users & only 1st message of each chat
         {
             $project: {
                 chatId: 1,
-                users: "$users.userId",
-                message: { $first: "$messages" }, //getting 1st element of array
+                // users: "$users.userId",
+                contactId: "$users.userId",
+                message: { $last: "$messages" }, //getting 1st element of array
             }
         },
     ])
@@ -59,7 +65,20 @@ const getSingleChat = (req, res, next) => {
 
 
     // res.status(200).send(req.params.chatId);
-    Chat.findById(req.params.chatId)
+
+
+    Chat.aggregate([
+        { $match: { _id: new ObjectId(req.params.chatId) } },
+        { $unwind: "$users" },
+        { $match: { "users.userId": { $eq: new ObjectId(req.user.id) } } },
+        {
+            $project: {
+                userId: "$users.userId",
+                isTyping: "$users.isTyping",
+                messages: 1,
+            }
+        }
+    ])
         .then(chat => {
             res.status(200)
                 .setHeader('Content-Type', 'application/json')
@@ -67,6 +86,19 @@ const getSingleChat = (req, res, next) => {
         },
             err => next(err))
         .catch(err => next(err));
+
+
+
+
+
+    // Chat.findById(req.params.chatId)
+    //     .then(chat => {
+    //         res.status(200)
+    //             .setHeader('Content-Type', 'application/json')
+    //             .json(chat);
+    //     },
+    //         err => next(err))
+    //     .catch(err => next(err));
 
 }
 

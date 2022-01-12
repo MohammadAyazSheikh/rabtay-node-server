@@ -54,7 +54,7 @@ const pushUserChat = (req, res, next, chat) => {
         .then(uChat => {
 
             if (uChat) {
-              
+
                 uChat.chats.push({ chatId: chat._id });
                 uChat.save()
                     .then(uChat => {
@@ -114,8 +114,8 @@ const addMessage = (req, res, next) => {
                     }
                 );
 
-                chat.users.push({ userId: req.user.id });
-                chat.users.push({ userId: req.body.to });
+                chat.users.push({ userId: req.user.id, isTyping: false });
+                chat.users.push({ userId: req.body.to, isTyping: false });
 
                 chat
                     .save()

@@ -46,6 +46,10 @@ const users = new Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
+    },
+    isTyping: {
+        type: Boolean,
+        default:false
     }
 });
 
