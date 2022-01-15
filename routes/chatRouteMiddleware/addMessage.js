@@ -8,19 +8,31 @@ const pushSecondUser = (req, res, next, chat) => {
     console.log(`in 2nd ${req.user.id} ${req.body.to} `)
     userChat.findOne({ userId: req.body.to })
         .then(uChat => {
-
+            //if user  already has userChat collection
             if (uChat) {
                 uChat.chats.push({ chatId: chat._id });
                 uChat.save()
                     .then(uChat => {
 
-                        res.status(200)
-                            .setHeader('Content-Type', 'application/json')
-                            .json(chat);
+                        Chat.aggregate([
+                            { $match: { _id: new ObjectId(chat._id) } },
+                            {
+                                $project: {
+                                    _id: 0,
+                                    message: { $last: "$messages" }
+                                }
+                            },
+                        ])
+                            .then(_chat => {
+                                res.status(200)
+                                    .setHeader('Content-Type', 'application/json')
+                                    .json(_chat[0]);
+                            }, err => next(err))
+                            .catch(err => next(err));
 
 
                     }, err => next(err))
-                    .catch(err => err)
+                    .catch(err => err);
 
             }
             else {
@@ -34,9 +46,21 @@ const pushSecondUser = (req, res, next, chat) => {
                         newUserChat.save()
                             .then(uChat => {
 
-                                res.status(200)
-                                    .setHeader('Content-Type', 'application/json')
-                                    .json(chat);
+                                Chat.aggregate([
+                                    { $match: { _id: new ObjectId(chat._id) } },
+                                    {
+                                        $project: {
+                                            _id: 0,
+                                            message: { $last: "$messages" }
+                                        }
+                                    },
+                                ])
+                                    .then(_chat => {
+                                        res.status(200)
+                                            .setHeader('Content-Type', 'application/json')
+                                            .json(_chat[0]);
+                                    }, err => next(err))
+                                    .catch(err => next(err));
 
                             }, err => next(err))
                             .catch(err => err);
@@ -152,10 +176,22 @@ const addMessage = (req, res, next) => {
                 chat
                     .save()
                     .then(chat => {
-                        res
-                            .status(200)
-                            .setHeader('Content-Type', 'application/json')
-                            .json(chat);
+
+                        Chat.aggregate([
+                            { $match: { _id: new ObjectId(req.body.chatId) } },
+                            {
+                                $project: {
+                                    _id: 0,
+                                    message: { $last: "$messages" }
+                                }
+                            },
+                        ])
+                            .then(_chat => {
+                                res.status(200)
+                                    .setHeader('Content-Type', 'application/json')
+                                    .json(_chat[0]);
+                            }, err => next(err))
+                            .catch(err => next(err));
 
                     })
             }, err => next(err))
