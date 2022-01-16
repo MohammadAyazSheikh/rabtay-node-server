@@ -13,6 +13,7 @@ const { addMessage } = require('./chatRouteMiddleware/addMessage');
 const { getChats, getSingleChat } = require('./chatRouteMiddleware/getChats');
 
 const contacts = require('../models/contactsModel');
+const chats = require('../models/chatModel');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 
@@ -21,7 +22,53 @@ const ObjectId = require('mongoose').Types.ObjectId;
 
 router.post('/test', passport.authenticate('jwt', { session: false }), (req, res, next) => {
 
-  
+  console.log(req.body.chatId);
+  console.log(req.user._id);
+
+  chats.updateMany(
+    {
+      // _id: req.body.chatId,
+      messages: { $elemMatch: { isSeen: false, from: req.user._id } }
+    },
+    // [
+    //   { $set: { "messages.$.isSeen": true } }
+    //   // { $unset: ["misc1", "misc2"] }
+    // ]
+    { $set: { "messages.$.isSeen": true } } //$ is for posstion
+  )
+    .then(data => {
+      console.log(data)
+      res.status(200).json(data);
+    }, err => next(err))
+    .catch(err => { next(err) })
+
+
+  /*
+  //if array has primitve value dont have objects
+  db.students.updateOne(
+   { _id: 1, grades: 80 },
+   { $set: { "grades.$" : 82 } }
+  )
+  */
+
+  /*
+  //matcing multi array elment
+  db.students.updateOne(
+     {
+       _id: 5,
+       grades: { $elemMatch: { grade: { $lte: 90 }, mean: { $gt: 80 } } }
+     },
+     { $set: { "grades.$.std" : 6 } }
+  )
+  */
+
+  /*
+  //matcing only one array elment
+  db.students.updateOne(
+   { _id: 4, "grades.grade": 85 },
+   { $set: { "grades.$.std" : 6 } }
+)
+  */
 });
 
 
