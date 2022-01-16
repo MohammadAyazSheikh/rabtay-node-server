@@ -12,6 +12,19 @@ const { GetSingleUsers } = require('./userRouteMiddleware/getSingleUser');
 const { addMessage } = require('./chatRouteMiddleware/addMessage');
 const { getChats, getSingleChat } = require('./chatRouteMiddleware/getChats');
 
+const contacts = require('../models/contactsModel');
+const ObjectId = require('mongoose').Types.ObjectId;
+
+
+
+
+
+router.post('/test', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+
+  
+});
+
+
 
 
 
@@ -123,6 +136,7 @@ router.post('/dltcontact', passport.authenticate('jwt', { session: false }), dlt
 router.post('/addMessage', passport.authenticate('jwt', { session: false }), addMessage);
 router.get('/getMessage', passport.authenticate('jwt', { session: false }), getChats)
 router.get('/getMessage/:chatId', passport.authenticate('jwt', { session: false }), getSingleChat);
+
 
 // router.route('/test')
 //   .get((req, res, next) => {
