@@ -12,6 +12,10 @@ const { GetSingleUsers } = require('./userRouteMiddleware/getSingleUser');
 const { addMessage } = require('./chatRouteMiddleware/addMessage');
 const { getChats, getSingleChat } = require('./chatRouteMiddleware/getChats');
 
+const twilio = require('twilio');
+const AccessToken = twilio.jwt.AccessToken;
+const VideoGrant = AccessToken.VideoGrant;
+
 const contacts = require('../models/contactsModel');
 const chats = require('../models/chatModel');
 const ObjectId = require('mongoose').Types.ObjectId;
@@ -56,6 +60,7 @@ router.route('/singleuser')
 
 
 
+//---------Log In route------------------------
 router.post('/login', (req, res, next) => {
   User.findOne({ username: req.body.username })
     .then((user) => {
@@ -71,11 +76,11 @@ router.post('/login', (req, res, next) => {
 
         const { token, expiresIn } = utils.issueJWT(user);
 
-        res.status(200).json({ success: true, token, expiresIn, user });
+        return res.status(200).json({ success: true, token, expiresIn, user });
 
       } else {
 
-        res.status(401).json({ success: false, msg: "you entered the wrong password" });
+        return res.status(401).json({ success: false, msg: "you entered the wrong password" });
 
       }
 
@@ -85,6 +90,8 @@ router.post('/login', (req, res, next) => {
     });
 })
 
+
+//--------------Sign Up Route--------------------
 router.post('/signup', (req, res, next) => {
 
   const { hash, salt } = utils.genPassword(req.body.password);
@@ -116,6 +123,29 @@ router.post('/signup', (req, res, next) => {
       next(err);
     });
 })
+
+//---------------Tiwilo Token------------------
+router.get('/getToken', passport.authenticate('jwt', { session: false }), (req, res) => {
+
+  const accessToken = new AccessToken(
+    process.env.ACCOUNT_SID,
+    process.env.API_KEY_SID,
+    process.env.API_KEY_SECRET,
+  );
+
+  
+
+  // Set the Identity of this token
+  accessToken.identity = req.user.username;
+
+  // Grant access to Video
+  var grant = new VideoGrant();
+  accessToken.addGrant(grant);
+
+  // Serialize the token as a JWT
+  var jwt = accessToken.toJwt();
+  return res.status(200).json({ twilioToken: jwt });
+});
 
 //=========================================== Notifications ==================================
 
