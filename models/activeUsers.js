@@ -35,6 +35,10 @@ const activeUsers = new Schema(
             type: Boolean,
             required: true,
             default: false
+        },
+        onCall: {
+            type: Boolean,
+            default: false
         }
     },
     {

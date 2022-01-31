@@ -133,7 +133,7 @@ router.get('/getToken', passport.authenticate('jwt', { session: false }), (req, 
     process.env.API_KEY_SECRET,
   );
 
-  
+
 
   // Set the Identity of this token
   accessToken.identity = req.user.username;
@@ -144,7 +144,7 @@ router.get('/getToken', passport.authenticate('jwt', { session: false }), (req, 
 
   // Serialize the token as a JWT
   var jwt = accessToken.toJwt();
-  return res.status(200).json({ twilioToken: jwt });
+  return res.status(200).json({ token: jwt });
 });
 
 //=========================================== Notifications ==================================
