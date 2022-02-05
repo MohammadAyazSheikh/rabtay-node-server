@@ -1,0 +1,47 @@
+# #shared yml file commands
+version: "3" 
+
+#specifying all of container we wanna create and each container refer as service
+services: 
+#adding nginx for load balancing and closing opening port for node-app
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "3000:80" #default port of nginx is 80 it will listen on it 
+    # sncing config file of nginx
+    volumes: 
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - node-app
+  node-app:    #name of container/service
+    build: .  #image from which we gonna biuld container we have docker file in our current dir o we put dot
+    # ports: 
+    #   - "3000:3000"  #dash "-" represent list wen can open  many ports of list
+    environment: 
+      - PORT=3000
+    #specifying on which container thi container 
+    #in our case mongo conatiner should satrt firdt so the node app connect to mongo container
+#     depends_on: 
+#       - mongo
+    
+#   #adding mongoDb container
+#   mongo:
+
+#     # we will not use build cmd here because in node container case we take node base image and 
+#     # building our custome node image  then put our code in it but for mongo  image we use built in mongo image
+#     # we dont need to customize it so we use image cmd here
+#     image: mongo #built in mongo image in from docekr hub
+#     # restart: always
+#     ports:
+#       - 27017:27017
+#     environment: 
+#       MONGO_INITDB_ROOT_USERNAME: ayaz
+#       MONGO_INITDB_ROOT_PASSWORD: mypass123
+#     volumes: 
+#     - mongo-db:/data/db #creating named volume fot readibility it takes nameOfVolume:pathOfContainerDir
+
+ 
+# #declaring mongo volume because named volume can be use by diff services/container 
+# #may be like other mongo container so we have to decalre it
+# volumes: 
+#   mongo-db:

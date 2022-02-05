@@ -1,0 +1,23 @@
+#overing shared a/c to dev mode cmd 
+version: "3" 
+services:
+  nginx:
+    ports:
+      - "3000:80"
+  node-app: 
+    # build: . 
+    build: 
+      context: .  #location of dicker file
+      args: 
+        NODE_ENV: development  #passing arg to docker file wehn iamge is building
+    # ports: 
+    #   - "3000:3000" 
+    volumes:
+      - ./:/app 
+      - /app/node_modules
+    environment: 
+      - NODE_ENV=development
+      - MONGO_USER=ayaz
+      - MONGO_PASSWORD=mypass123
+      - SESSION_SECRET=mysecret
+    command: npm run dev  #overriding  npm command in dev mode we will run nodemon command
