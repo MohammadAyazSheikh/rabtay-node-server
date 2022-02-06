@@ -19,5 +19,4 @@ services:
       - NODE_ENV=development
       - MONGO_USER=ayaz
       - MONGO_PASSWORD=mypass123
-      - SESSION_SECRET=mysecret
     command: npm run dev  #overriding  npm command in dev mode we will run nodemon command

@@ -21,27 +21,27 @@ services:
       - PORT=3000
     #specifying on which container thi container 
     #in our case mongo conatiner should satrt firdt so the node app connect to mongo container
-#     depends_on: 
-#       - mongo
+    depends_on: 
+      - mongo
     
-#   #adding mongoDb container
-#   mongo:
+  #adding mongoDb container
+  mongo:
 
-#     # we will not use build cmd here because in node container case we take node base image and 
-#     # building our custome node image  then put our code in it but for mongo  image we use built in mongo image
-#     # we dont need to customize it so we use image cmd here
-#     image: mongo #built in mongo image in from docekr hub
-#     # restart: always
-#     ports:
-#       - 27017:27017
-#     environment: 
-#       MONGO_INITDB_ROOT_USERNAME: ayaz
-#       MONGO_INITDB_ROOT_PASSWORD: mypass123
-#     volumes: 
-#     - mongo-db:/data/db #creating named volume fot readibility it takes nameOfVolume:pathOfContainerDir
+    # we will not use build cmd here because in node container case we take node base image and 
+    # building our custome node image  then put our code in it but for mongo  image we use built in mongo image
+    # we dont need to customize it so we use image cmd here
+    image: mongo #built in mongo image in from docekr hub
+    # restart: always
+    ports:
+      - 27017:27017
+    # environment: 
+    #   MONGO_INITDB_ROOT_USERNAME: ayaz
+    #   MONGO_INITDB_ROOT_PASSWORD: mypass123
+    volumes: 
+    - mongo-db:/data/db #creating named volume fot readibility it takes nameOfVolume:pathOfContainerDir
 
  
-# #declaring mongo volume because named volume can be use by diff services/container 
-# #may be like other mongo container so we have to decalre it
-# volumes: 
-#   mongo-db:
+#declaring mongo volume because named volume can be use by diff services/container 
+#may be like other mongo container so we have to decalre it
+volumes: 
+  mongo-db:

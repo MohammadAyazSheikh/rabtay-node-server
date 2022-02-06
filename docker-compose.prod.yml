@@ -1,0 +1,28 @@
+#overidng shared a/c to prod mode cmd 
+version: "3" 
+services:
+  nginx:
+    ports:
+      - "80:80" #on production our machin will listen on 80 bcz http default port is 80
+  node-app: 
+    # build: .
+    build: 
+      context: .  #location of docker file
+      args: 
+        NODE_ENV: production  #passing arg to docker file wehn iamge is building
+    # ports: 
+    #   - "3000:3000" 
+    # volumes:      #in prod mode we dotn wanna sycn lcoal file with containers file
+    #   - ./:/app 
+    #   - /app/node_modules
+    
+    environment: 
+      - NODE_ENV=production
+      - MONGO_USER=${MONGO_USER}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+    command: npm start  #overriding  npm command in prod mode we will run npm start or node index.js
+
+  # mongo:
+  #   environment: 
+  #     MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+  #     MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
